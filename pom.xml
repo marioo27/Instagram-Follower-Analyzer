@@ -27,22 +27,11 @@
     </licenses>
 
     <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>2.0.17</version>
-        </dependency>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <version>1.5.19</version>
-        </dependency>
-
         <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -85,7 +74,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>es.ciudadescolar.Main</mainClass>
+                            <mainClass>mgr.instagram.Main</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>
@@ -105,6 +94,4 @@
             </plugin>
         </plugins>
     </build>
-
-
 </project>
