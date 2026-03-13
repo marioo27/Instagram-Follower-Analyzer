@@ -1,120 +1,69 @@
 package mgr.instagram;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import java.io.File;
 import java.io.IOException;
-import java.util.HashSet;
+import java.util.Scanner;
 import java.util.Set;
 
 public class Main {
 
     public static void main(String[] args) {
-        // Rutas a los JSON (puedes cambiarlas o recibirlas por args)
+
         String followingPath = "following.json";
         String followersPath = "followers_1.json";
 
-        ObjectMapper mapper = new ObjectMapper();
+        JsonManager manager = new JsonManager(followingPath, followersPath);
 
         try {
-            Set<String> following = loadFollowing(mapper, followingPath);
-            Set<String> followers = loadFollowers(mapper, followersPath);
-
-            // 1) Me siguen y NO les sigo de vuelta
-            Set<String> followersNoFollowBack = new HashSet<>(followers);
-            followersNoFollowBack.removeAll(following);
-
-            // 2) Seguimiento mutuo
-            Set<String> mutual = new HashSet<>(followers);
-            mutual.retainAll(following);
-
-            // 3) Sigo y NO me siguen de vuelta
-            Set<String> followingNoFollowBack = new HashSet<>(following);
-            followingNoFollowBack.removeAll(followers);
-
-            System.out.println("===== Me siguen y NO les sigo de vuelta =====");
-            followersNoFollowBack.forEach(System.out::println);
-
-            System.out.println("\n===== Seguimiento mutuo =====");
-            mutual.forEach(System.out::println);
-
-            System.out.println("\n===== Sigo y NO me siguen de vuelta =====");
-            followingNoFollowBack.forEach(System.out::println);
-
+            manager.loadData();
         } catch (IOException e) {
-            System.err.println("Error procesando ficheros: " + e.getMessage());
+            System.err.println("Error cargando los ficheros JSON: " + e.getMessage());
+            return;
         }
-    }
 
-    /**
-     * following.json:
-     * {
-     *   "relationships_following": [
-     *     {
-     *       "title": "usuario",
-     *       "string_list_data": [ { "href": "...", "timestamp": ... } ]
-     *     },
-     *     ...
-     *   ]
-     * }
-     */
-    private static Set<String> loadFollowing(ObjectMapper mapper, String path) throws IOException {
-        JsonNode root = mapper.readTree(new File(path));
-        JsonNode relationships = root.get("relationships_following");
+        Scanner sc = new Scanner(System.in);
+        int opcion;
 
-        Set<String> result = new HashSet<>();
+        do {
+            System.out.println("===== MENU INSTAGRAM =====");
+            System.out.println("1. Ver quien me sigue y NO sigo de vuelta");
+            System.out.println("2. Ver quien me sigue y yo tambien sigo (mutuos)");
+            System.out.println("3. Ver a quien sigo y NO me sigue de vuelta");
+            System.out.println("0. Salir");
+            System.out.print("Elige una opcion: ");
 
-        if (relationships != null && relationships.isArray()) {
-            for (JsonNode node : relationships) {
-                JsonNode titleNode = node.get("title");
-                if (titleNode != null && !titleNode.isNull()) {
-                    String username = titleNode.asText();
-                    if (username != null && !username.isBlank()) {
-                        result.add(username);
-                    }
-                }
+            while (!sc.hasNextInt()) {
+                System.out.print("Opcion no valida. Introduce un numero: ");
+                sc.next();
             }
-        }
-        return result;
-    }
+            opcion = sc.nextInt();
 
-    /**
-     * followers_1.json:
-     * [
-     *   {
-     *     "title": "",
-     *     "string_list_data": [
-     *       {
-     *         "href": "https://www.instagram.com/usuario",
-     *         "value": "usuario",
-     *         "timestamp": 1234567890
-     *       }
-     *     ]
-     *   },
-     *   ...
-     * ]
-     */
-    private static Set<String> loadFollowers(ObjectMapper mapper, String path) throws IOException {
-        JsonNode array = mapper.readTree(new File(path));
-
-        Set<String> result = new HashSet<>();
-
-        if (array != null && array.isArray()) {
-            for (JsonNode node : array) {
-                JsonNode stringList = node.get("string_list_data");
-                if (stringList != null && stringList.isArray() && stringList.size() > 0) {
-                    JsonNode first = stringList.get(0);
-                    JsonNode valueNode = first.get("value");
-                    if (valueNode != null && !valueNode.isNull()) {
-                        String username = valueNode.asText();
-                        if (username != null && !username.isBlank()) {
-                            result.add(username);
-                        }
-                    }
+            switch (opcion) {
+                case 1 -> {
+                    Set<String> list = manager.getFollowersNoFollowBack();
+                    System.out.println("=== Me siguen y NO les sigo de vuelta ===");
+                    list.forEach(System.out::println);
+                    System.out.println("Total: " + list.size());
                 }
+                case 2 -> {
+                    Set<String> list = manager.getMutualFollowers();
+                    System.out.println("=== Seguimiento mutuo ===");
+                    list.forEach(System.out::println);
+                    System.out.println("Total: " + list.size());
+                }
+                case 3 -> {
+                    Set<String> list = manager.getFollowingNoFollowBack();
+                    System.out.println("=== Sigo y NO me siguen de vuelta ===");
+                    list.forEach(System.out::println);
+                    System.out.println("Total: " + list.size());
+                }
+                case 0 -> System.out.println("Saliendo...");
+                default -> System.out.println("Opcion no valida.");
             }
-        }
-        return result;
+
+            System.out.println();
+
+        } while (opcion != 0);
+
+        sc.close();
     }
 }
