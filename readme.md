@@ -1,18 +1,18 @@
 # Instagram Follower Analyzer
 [![Java](https://img.shields.io/badge/Java-17+-orange)](https://java.com)
-[![Maven](https://img.shields.io/badge/Maven-3.8+-blue)](https://maven.apache.org)
+[![Maven](https://img.shields.io/badge/Maven-3.7+-blue)](https://maven.apache.org)
 [![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
+
 
 **Backend Java CLI** | **JSON Processing** | **Follower Analytics**
 
 Console application that analyzes Instagram JSON exports to identify:
 - 🔄 Mutual followers
 - ➡️ One-way followers  
-- ⬅️ Unfollowed accounts
 
 ## Requirements
 - Java 17+
-- Maven 3.8+
+- Maven 3.7+
 
 ### 📥 How to Get Your Instagram JSON Files
 

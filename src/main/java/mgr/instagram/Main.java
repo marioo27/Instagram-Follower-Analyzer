@@ -42,10 +42,10 @@ public class Main {
             System.out.println("2. See mutual followers");
             System.out.println("3. See who I follow and DOESN'T follow me back");
             System.out.println("0. Exit");
-            System.out.print("Choose an option: ");
+            System.out.print("Choose an option -> ");
 
             while (!sc.hasNextInt()) {
-                System.out.print("Invalid option. Enter a number: ");
+                System.out.print("Invalid option. Enter a number -> ");
                 sc.next();
             }
             option = sc.nextInt();
